@@ -1,9 +1,10 @@
+#ntah saja buat alang ii free. ni byk pakai untuk show report
 def make_bar(value):
   value = round(value/100*20)
   filledHash = value
   emptyHash = 20-value
   return f"[{filledHash*"#"}{emptyHash*"-"}]"
-
+#ni pakai sekali je, and buat function sepatutnya untuk divide task, tapi aku alang ii
 def get_status(hi, score):
   if hi >= 70:
     status = "Stable"
@@ -18,12 +19,12 @@ def get_status(hi, score):
     status = "Cyberpsychosis"
   return status
 
-
+#ni nak mintak logic roles buat
 def advisory(status):
   
 
 HIbar= make_bar(50)
-
+#btw jgn run lagi, sbb ada function yang aku  belum declare, recommend dll
 def show_report():
   print(f"+{20*"-"} SAFETY REPORT {20*"-"}")
   print(f'|{" HUMANITY INDEX":<20}{HIbar}')
