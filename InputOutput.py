@@ -12,7 +12,7 @@ menuNum = ask_number("next?", 1, 5)
 print(menuNum)
 
 #ni pulak untuk buat bar
-def make_bar(info, value):
+def make_bar(value):
   filledHash = round(value/100*20)
   emptyHash = round((100-value)/100*20)
   return(f"[{filledHash*"#"}{emptyHash*"-"}]")
