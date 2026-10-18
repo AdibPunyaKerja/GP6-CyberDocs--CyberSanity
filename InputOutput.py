@@ -13,6 +13,7 @@ print(menuNum)
 
 #ni pulak untuk buat bar
 def make_bar(value):
-  filledHash = round(value/100*20)
-  emptyHash = round((100-value)/100*20)
-  return(f"[{filledHash*"#"}{emptyHash*"-"}]")
+  value = round(value/100*20)
+  filledHash = value
+  emptyHash = 20-value
+  return f"[{filledHash*"#"}{emptyHash*"-"}]"
