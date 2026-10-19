@@ -38,6 +38,8 @@ def show_report():
   print(f'|{" MALFUNCTION CHECK":<20}')
   
   
-  
+  component_list = (["Optical Scanner", "Eyes", 5, 10, "Civilian"],["Subdermal Armor", "Skin", 10, 20, "Civilian"],["Load-Lifter Arm", "Arm", 12, 40, "Industrial"],["Kerenzikov", "Nervous", 18, 35, "Combat"],["Mantis Blades", "Arm", 18, 35, "Combat"])
 
-print(show_report())
+print(54*"-")
+for index, component in enumerate(component_list, 1):
+  print(f"{index}|{component[0]:<20}|{component[1]:<10}|{component[2]:<3}|{component[3]:<3}|{component[4]:<11}|")
