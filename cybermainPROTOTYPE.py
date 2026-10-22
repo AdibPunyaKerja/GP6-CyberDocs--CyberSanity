@@ -19,8 +19,14 @@ def get_status(hi, score):
     status = "Cyberpsychosis"
   return status
 
+def ask_number(question, low, high):
+    user_input = input(question)
+    while not user_input.isdigit() or not low <= int(user_input) <= high:
+        print(f"input is out of range, please input between {low} to {high}")
+        user_input = input(question)
+    return int(user_input)
+
 #ni nak mintak logic roles buat
-  
 
 HIbar= make_bar(50)
 #btw jgn run lagi, sbb ada function yang aku  belum define recommend dll
@@ -49,24 +55,37 @@ for index, component in enumerate(component_list, 1):
 
 def choose_user_type():
   user_type = ""
-  while user_type not in ["citizen", "worker", "military", "disabled"]:
-    user_type = input("Select user type.....").lower()
-  if user_type == "citizen":
+  print("SELECT USER TYPE")
+  print("[1] Citizen")
+  print("[2] Worker")
+  print("[3] Military")
+  print("[4] Disabled")
+  
+  user_input = ask_number(">.....",1,4)
+  print("")
+  if user_input == 1:
+    user_type = "citizen"
     capacity = 100
     modifier = 1.0
     allowed = ["Civilian"]
-  elif user_type == "worker":
+  elif user_input == 2:
+    user_type = "worker"
     capacity = 150
     modifier = 1.0
     allowed = ["Civilian", "Industrial"]
-  elif user_type == "military":
+  elif user_input == 3:
+    user_type = "military"
     capacity = 250
     modifier = 0.8
     allowed = ["Civilian", "Industrial", "Combat"]
-  elif user_type == "disabled":
+  elif user_input == 4:
+    user_type = "disabled"
     capacity = 100
     modifier = 1.0
     allowed = ["Civilian", "Medical"]
+  print(f"USER TYPE........{user_type.upper()}")
+  print(f"POWER CORE.......{capacity}W")
+  print(f"HUMANITY MOD.....x{modifier:.2f}")
   return user_type, capacity, modifier, allowed
   
 #btw aku buat terus yang bawah ni sbb klu tak, value tak keluar dari function
@@ -76,13 +95,6 @@ def allowing_component():
     if part[4] in allowed:
       allowed_list.append(part[0])
   return allowed_list
-
-def ask_number(question, low, high):
-    user_input = input(question)
-    while not user_input.isdigit() or not low <= int(user_input) <= high:
-        print(f"input is out of range, please input between {low} to {high}")
-        user_input = input(question)
-    return int(user_input)
 
 
 def install_component(component_list, installed_component, allowed):
@@ -108,12 +120,6 @@ def install_component(component_list, installed_component, allowed):
         
 user_type, capacity, modifier, allowed = choose_user_type()
 allowed_list = allowing_component()
-print(allowed_list)
+print(allowed)
 install_component(component_list, installed_component, allowed)
 show_report()
-  
-  
-  
-
-
-
