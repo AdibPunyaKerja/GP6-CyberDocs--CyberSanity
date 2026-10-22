@@ -49,9 +49,10 @@ locked_list = []
 installed_component = []
 allowed_list = []
 
-print(54*"-")
-for index, component in enumerate(component_list, 1):
-  print(f"{index}|{component[0]:<20}|{component[1]:<10}|{component[2]:<3}|{component[3]:<3}|{component[4]:<11}|")
+def show_list():
+  print(54*"-")
+  for index, component in enumerate(component_list, 1):
+    print(f"{index}|{component[0]:<20}|{component[1]:<10}|{component[2]:<3}|{component[3]:<3}|{component[4]:<11}|")
 
 def choose_user_type():
   user_type = ""
@@ -117,9 +118,15 @@ def install_component(component_list, installed_component, allowed):
         break
     else:
       print("component not found")
-        
+show_list()
 user_type, capacity, modifier, allowed = choose_user_type()
 allowed_list = allowing_component()
 print(allowed)
 install_component(component_list, installed_component, allowed)
 show_report()
+  
+  
+  
+
+
+
