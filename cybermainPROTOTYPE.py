@@ -23,7 +23,7 @@ def get_status(hi, score):
   
 
 HIbar= make_bar(50)
-#btw jgn run lagi, sbb ada function yang aku  belum declare, recommend dll
+#btw jgn run lagi, sbb ada function yang aku  belum define recommend dll
 #and ni aku hardcode can dia punya value
 def show_report():
   print(f"+{20*"-"} SAFETY REPORT {20*"-"}")
