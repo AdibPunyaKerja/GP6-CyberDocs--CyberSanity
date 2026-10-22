@@ -34,7 +34,7 @@ def show_report():
   print(f"+{55*'-'}")
   print(f'|{" STATUS":<20}>>{get_status(50, 80)}<<')
   print(f'|{" DAMPENER ADVISORY":<20}')
-  print(f'|{" RECOMMENDATION":<20}{recommend(installed, status)}')
+  print(f'|{" RECOMMENDATION":<20}')
   print(f'|{" MALFUNCTION CHECK":<20}')
   
   
