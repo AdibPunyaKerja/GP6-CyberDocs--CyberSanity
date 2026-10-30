@@ -5,19 +5,7 @@ def make_bar(value):
   emptyHash = 20-value
   return f'[{filledHash*"#"}{emptyHash*"-"}]'
 #ni pakai sekali je, and buat function sepatutnya untuk divide task, tapi aku alang ii
-def get_status(hi, score):
-  if hi >= 70:
-    status = "Stable"
-  elif hi >= 40: 
-    status = "Warning"
-  elif hi >= 20:
-    status = "Cyberpsychosis Risk"
-  else:
-    status = "Critical"
-    
-  if score > 75 and (status == "Warning" or status == "Stable"):
-    status = "Cyberpsychosis Risk"
-  return status
+
 
 def ask_number(question, low, high):
     user_input = input(question)
@@ -73,23 +61,55 @@ def calc_penalty(clashes):
   return penalty
     
 
+def calc_overload(power_percentage,humanity, penalty):
+  overload_score = 0.4*power_percentage + 0.3 * (100 - humanity) + 0.3 * penalty
+  return overload_score
+
+
+
+def get_status(humanity, overload_score):
+  if humanity >= 70:
+    status = "Stable"
+  elif humanity >= 40: 
+    status = "Warning"
+  elif humanity >= 20:
+    status = "Cyberpsychosis Risk"
+  else:
+    status = "Critical"
+    
+  if overload_score > 75 and (status == "Warning" or status == "Stable"):
+    status = "Cyberpsychosis Risk"
+  return status
+
+def recommend(installed_component, status):
+  recommendation = ""
+  highest_power = 0
+  if status == "Stable":
+    recommendation= "No removal needed."
+  elif status == "Warning":
+    recommendation ="No removal needed. Do not install more."
+  elif status == "Cyberpsychosis Risk" or status == "Critical":
+    for part in installed_component:
+      if part[3] > highest_power:
+        highest_power = part[3]
+        recommendation = f"Remove {part[0]}"
+  return recommendation
 
 
 
 
-HIbar= make_bar(50)
 #btw jgn run lagi, sbb ada function yang aku  belum define recommend dll
 #and ni aku hardcode can dia punya value
 def show_report():
   print(f"+{20*"-"} SAFETY REPORT {20*"-"}")
-  print(f'|{" HUMANITY INDEX":<20}{HIbar}')
-  print(f'|{" POWER LOAD":<20}{make_bar(40)}')
-  print(f'|{" SLOT CLASHES":<20} 2 (nervous,arm) -> penalty 50')
-  print(f'|{" OVERLOAD RISK":<20}{make_bar(70)}')
+  print(f'|{" HUMANITY INDEX":<20}{make_bar(humanity)}')
+  print(f'|{" POWER LOAD":<20}{make_bar(power_percentage)}')
+  print(f'|{" SLOT CLASHES":<20} {len(clashes)} {clashes} -> penalty {penalty}')
+  print(f'|{" OVERLOAD RISK":<20}{make_bar(overload_score)}')
   print(f"+{55*'-'}")
-  print(f'|{" STATUS":<20}>>{get_status(50, 80)}<<')
+  print(f'|{" STATUS":<20}>>{status}<<')
   print(f'|{" DAMPENER ADVISORY":<20}')
-  print(f'|{" RECOMMENDATION":<20}')
+  print(f'|{" RECOMMENDATION":<20}{recommendation}')
   print(f'|{" MALFUNCTION CHECK":<20}')
   
   
@@ -191,11 +211,9 @@ def remove_component(installed_component):
 
 
 
-component_list = (["Optical Scanner", "Eyes", 5, 10, "Civilian",1],["Subdermal Armor", "Skin", 10, 20, "Civilian",2],["Load-Lifter Arm", "Arm", 12, 40, "Industrial",3],["Kerenzikov", "Nervous", 15, 30, "Combat",4],["Mantis Blades", "Arm", 18, 35, "Combat",5], ["Sandvistan","Nervous", 25, 60, "Combat"], ["Neural Link", "Nervous", 20,50,"Combat"], ["Prosthetic Arm", "Arm", 8,25,"Medical"],["Retinal Implant","Eyes",6,12,"Medical"], ["Smart Wrist Display","Arm", 3,5,"Civilian"],["Night Vision Lens","Eyes", 7,15,"Civilian"], ["Heavy Grip Hand", "Arm", 10, 30, "Industrial"])
+component_list = (["Optical Scanner", "Eyes", 5, 10, "Civilian",1],["Subdermal Armor", "Skin", 10, 20, "Civilian",2],["Load-Lifter Arm", "Arm", 12, 40, "Industrial",3],["Kerenzikov", "Nervous", 15, 30, "Combat",4],["Mantis Blades", "Arm", 18, 35, "Combat",5], ["Sandvistan","Nervous", 25, 60, "Combat",6], ["Neural Link", "Nervous", 20,50,"Combat",7], ["Prosthetic Arm", "Arm", 8,25,"Medical",8],["Retinal Implant","Eyes",6,12,"Medical",9], ["Smart Wrist Display","Arm", 3,5,"Civilian",10],["Night Vision Lens","Eyes", 7,15,"Civilian",11], ["Heavy Grip Hand", "Arm", 10, 30, "Industrial",12])
 installed_component = []
-total_power = calc_power(installed_component)
-humanity = calc_humanity(installed_component, modifier, user_type)
-locked = False
+
 
 show_list()
 user_type, capacity, modifier, allowed = choose_user_type()
@@ -213,6 +231,14 @@ while True:
   elif menuNum == 3:
     remove_component(installed_component)
   elif menuNum == 4:
+    total_power = calc_power(installed_component)
+    power_percentage = calc_power_load(capacity, total_power)
+    humanity = calc_humanity(installed_component, modifier, user_type)
+    clashes = find_clashes(installed_component)
+    penalty = calc_penalty(clashes)
+    overload_score = calc_overload(power_percentage,humanity, penalty)
+    status = get_status(humanity, overload_score)
+    recommendation = recommend(installed_component, status)
     show_report()
   elif menuNum == 5:
     #belum lagi
