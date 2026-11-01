@@ -41,10 +41,8 @@ def calc_humanity(installed_component, modifier, user_type):
 def calc_power_load(capacity, total_power):
   power_percentage = total_power / capacity * 100
   if power_percentage >100:
-    power_percentage_show = 100
-  else:
-    power_percentage_show= power_percentage
-  return power_percentage_show, power_percentage
+    power_percentage = 100
+  return power_percentage
 
 def find_clashes(installed_component):
   seen = []
@@ -59,10 +57,8 @@ def find_clashes(installed_component):
 def calc_penalty(clashes):
   penalty = len(clashes) * 25
   if penalty >100:
-    penalty_percentage = 100
-  else:
-    penalty_percentage = penalty
-  return penalty, penalty_percentage
+    penalty = 100
+  return penalty
     
 
 def calc_overload(power_percentage,humanity, penalty):
@@ -120,6 +116,8 @@ def malfunction(overload_score, installed_component):
       if part[3] > highest_power:
         highest_power = part[3]
         malfunction_result = f"TRIGGERED : {part[0]} shuts down"
+  else:
+    malfunction_result = "Malfunction not detected."
   return malfunction_result
 
 
@@ -127,10 +125,10 @@ def malfunction(overload_score, installed_component):
 #and ni aku hardcode can dia punya value
 def show_report():
   print(f"+{20*"-"} SAFETY REPORT {20*"-"}")
-  print(f'|{" HUMANITY INDEX":<20}{make_bar(humanity)}')
-  print(f'|{" POWER LOAD":<20}{make_bar(power_percentage_show)}{power_percentage}/{capacity}')
+  print(f'|{" HUMANITY INDEX":<20}{make_bar(humanity)}{humanity:>7.2f}')
+  print(f'|{" POWER LOAD":<20}{make_bar(power_percentage)}{total_power:>4}/{capacity}W')
   print(f'|{" SLOT CLASHES":<20} {len(clashes)} {clashes} -> penalty {penalty}')
-  print(f'|{" OVERLOAD RISK":<20}{make_bar(overload_score)}')
+  print(f'|{" OVERLOAD RISK":<20}{make_bar(overload_score)}{overload_score:>7.2f}')
   print(f"+{55*'-'}")
   print(f'|{" STATUS":<20}>>{status}<<')
   print(f'|{" DAMPENER ADVISORY":<20}{advisory}')
@@ -144,7 +142,7 @@ locked = False
 def show_list():
   print(54*"-")
   for index, component in enumerate(component_list, 1):
-    print(f"{index}|{component[0]:<20}|{component[1]:<10}|{component[2]:<3}|{component[3]:<3}|{component[4]:<11}|")
+    print(f"{index:>2}|{component[0]:<20}|{component[1]:<10}|{component[2]:<3}|{component[3]:<3}|{component[4]:<11}|")
 
 
 def choose_user_type():
@@ -188,7 +186,7 @@ def allowing_component(allowed):
   allowed_list = []
   for part in component_list:
     if part[4] in allowed:
-      allowed_list.append(part[0])
+      allowed_list.append([part[0],part[5]])
   return allowed_list
 
 
@@ -200,7 +198,7 @@ def install_component(component_list, installed_component, allowed,locked):
   if user_input == 0:
       return
   for part in component_list:
-    if user_input == part[5] and part[0] in allowed_list:
+    if user_input == part[5] and part[4] in allowed:
       if part in installed_component:
         print("component has already been installed")
         break
@@ -208,7 +206,7 @@ def install_component(component_list, installed_component, allowed,locked):
         installed_component.append(part)
         print(f"{part[0]} installed")
       break
-    elif user_input == part[5] and part[0] not in allowed_list:
+    elif user_input == part[5] and part[4] not in allowed:
       print("component not allowed for your user type")
       break
   else:
@@ -220,7 +218,7 @@ def remove_component(installed_component):
     return
   for index, component in enumerate(installed_component, 1):
     print(f"{index}|{component[0]:<20}|{component[1]:<10}|{component[2]:<3}|{component[3]:<3}|{component[4]:<11}|")
-  user_input = ask_number("select cybernetics to be removed....", 0, len(installed_component))
+  user_input = ask_number("select cybernetics to be removed....\n>....", 0, len(installed_component))
   if user_input == 0:
     return
   else:
@@ -236,7 +234,7 @@ def remove_component(installed_component):
 
 
 
-component_list = (["Optical Scanner", "Eyes", 5, 10, "Civilian",1],["Subdermal Armor", "Skin", 10, 20, "Civilian",2],["Load-Lifter Arm", "Arm", 12, 40, "Industrial",3],["Kerenzikov", "Nervous", 15, 30, "Combat",4],["Mantis Blades", "Arm", 18, 35, "Combat",5], ["Sandvistan","Nervous", 25, 60, "Combat",6], ["Neural Link", "Nervous", 20,50,"Combat",7], ["Prosthetic Arm", "Arm", 8,25,"Medical",8],["Retinal Implant","Eyes",6,12,"Medical",9], ["Smart Wrist Display","Arm", 3,5,"Civilian",10],["Night Vision Lens","Eyes", 7,15,"Civilian",11], ["Heavy Grip Hand", "Arm", 10, 30, "Industrial",12])
+component_list = (["Optical Scanner", "Eyes", 5, 10, "Civilian",1],["Subdermal Armor", "Skin", 10, 20, "Civilian",2],["Load-Lifter Arm", "Arm", 12, 40, "Industrial",3],["Kerenzikov", "Nervous", 15, 30, "Combat",4],["Mantis Blades", "Arm", 18, 35, "Combat",5], ["Sandevistan","Nervous", 25, 60, "Combat",6], ["Neural Link", "Nervous", 20,50,"Combat",7], ["Prosthetic Arm", "Arm", 8,25,"Medical",8],["Retinal Implant","Eyes",6,12,"Medical",9], ["Smart Wrist Display","Arm", 3,5,"Civilian",10],["Night Vision Lens","Eyes", 7,15,"Civilian",11], ["Heavy Grip Hand", "Arm", 10, 30, "Industrial",12])
 installed_component = []
 
 
@@ -245,12 +243,12 @@ user_type, capacity, modifier, allowed = choose_user_type()
 allowed_list = allowing_component(allowed)
 print("  [1] Show available components\n  [2] Install a component\n  [3] remove a component\n  [4] Run analysis\n  [5] Change user type (resets installed list)\n  [6]exit\n  [0]see menu again")
 while True:
-  menuNum = ask_number("",0,6)
+  menuNum = ask_number(">....",0,6)
   if menuNum == 0:
     print("  [1] Show available components\n  [2] Install a component\n  [3] remove a component\n  [4] Run analysis\n  [5] Change user type (resets installed list)\n  [6]exit\n  [0]see menu again")
   elif menuNum == 1:
     for index, component in enumerate(allowed_list):
-     print(f"....{component}")
+     print(f">....[{component[1]}]{component[0]}")
   elif menuNum == 2:
     humanity = calc_humanity(installed_component, modifier, user_type)
     if humanity < 20:
@@ -262,10 +260,10 @@ while True:
     remove_component(installed_component)
   elif menuNum == 4:
     total_power = calc_power(installed_component)
-    power_percentage_show,power_percentage = calc_power_load(capacity, total_power)
+    power_percentage = calc_power_load(capacity, total_power)
     humanity = calc_humanity(installed_component, modifier, user_type)
     clashes = find_clashes(installed_component)
-    penalty,penalty_percentage = calc_penalty(clashes)
+    penalty = calc_penalty(clashes)
     overload_score = calc_overload(power_percentage,humanity, penalty)
     status = get_status(humanity, overload_score)
     advisory = find_advisory(status)
