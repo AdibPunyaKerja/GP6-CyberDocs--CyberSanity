@@ -41,8 +41,10 @@ def calc_humanity(installed_component, modifier, user_type):
 def calc_power_load(capacity, total_power):
   power_percentage = total_power / capacity * 100
   if power_percentage >100:
-    power_percentage = 100
-  return power_percentage
+    power_percentage_show = 100
+  else:
+    power_percentage_show= power_percentage
+  return power_percentage_show, power_percentage
 
 def find_clashes(installed_component):
   seen = []
@@ -57,8 +59,10 @@ def find_clashes(installed_component):
 def calc_penalty(clashes):
   penalty = len(clashes) * 25
   if penalty >100:
-    penalty = 100
-  return penalty
+    penalty_percentage = 100
+  else:
+    penalty_percentage = penalty
+  return penalty, penalty_percentage
     
 
 def calc_overload(power_percentage,humanity, penalty):
@@ -81,21 +85,42 @@ def get_status(humanity, overload_score):
     status = "Cyberpsychosis Risk"
   return status
 
+def find_advisory(status):
+  if status == "Stable":
+    advisory = "None Required"
+  elif status == "Warning":
+    advisory = "Light. Avoid further components"
+  elif status == "Cyberpsychosis Risk":
+    advisory = "Strong. Remove component until Humanity Index is 40 or higher"
+  else:
+    advisory = "Maximum. Installation Locked. Remove component immediately"
+  return advisory
+
+
+
 def recommend(installed_component, status):
   recommendation = ""
-  highest_power = 0
+  highest_loss = 0
   if status == "Stable":
     recommendation= "No removal needed."
   elif status == "Warning":
     recommendation ="No removal needed. Do not install more."
   elif status == "Cyberpsychosis Risk" or status == "Critical":
     for part in installed_component:
-      if part[3] > highest_power:
-        highest_power = part[3]
+      if part[2] > highest_loss:
+        highest_loss = part[2]
         recommendation = f"Remove {part[0]}"
   return recommendation
 
-
+def malfunction(overload_score, installed_component):
+  malfunction_result = ""
+  highest_power = 0
+  if overload_score >75:
+    for part in installed_component:
+      if part[3] > highest_power:
+        highest_power = part[3]
+        malfunction_result = f"TRIGGERED : {part[0]} shuts down"
+  return malfunction_result
 
 
 #btw jgn run lagi, sbb ada function yang aku  belum define recommend dll
@@ -103,14 +128,14 @@ def recommend(installed_component, status):
 def show_report():
   print(f"+{20*"-"} SAFETY REPORT {20*"-"}")
   print(f'|{" HUMANITY INDEX":<20}{make_bar(humanity)}')
-  print(f'|{" POWER LOAD":<20}{make_bar(power_percentage)}')
+  print(f'|{" POWER LOAD":<20}{make_bar(power_percentage_show)}{power_percentage}/{capacity}')
   print(f'|{" SLOT CLASHES":<20} {len(clashes)} {clashes} -> penalty {penalty}')
   print(f'|{" OVERLOAD RISK":<20}{make_bar(overload_score)}')
   print(f"+{55*'-'}")
   print(f'|{" STATUS":<20}>>{status}<<')
-  print(f'|{" DAMPENER ADVISORY":<20}')
+  print(f'|{" DAMPENER ADVISORY":<20}{advisory}')
   print(f'|{" RECOMMENDATION":<20}{recommendation}')
-  print(f'|{" MALFUNCTION CHECK":<20}')
+  print(f'|{" MALFUNCTION CHECK":<20}{malfunction_result}')
   
   
 installed_component = []
@@ -227,22 +252,33 @@ while True:
     for index, component in enumerate(allowed_list):
      print(f"....{component}")
   elif menuNum == 2:
+    humanity = calc_humanity(installed_component, modifier, user_type)
+    if humanity < 20:
+      locked = True
+    else:
+      locked = False
     install_component(component_list, installed_component, allowed,locked)
   elif menuNum == 3:
     remove_component(installed_component)
   elif menuNum == 4:
     total_power = calc_power(installed_component)
-    power_percentage = calc_power_load(capacity, total_power)
+    power_percentage_show,power_percentage = calc_power_load(capacity, total_power)
     humanity = calc_humanity(installed_component, modifier, user_type)
     clashes = find_clashes(installed_component)
-    penalty = calc_penalty(clashes)
+    penalty,penalty_percentage = calc_penalty(clashes)
     overload_score = calc_overload(power_percentage,humanity, penalty)
     status = get_status(humanity, overload_score)
+    advisory = find_advisory(status)
     recommendation = recommend(installed_component, status)
+    malfunction_result = malfunction(overload_score, installed_component)
     show_report()
   elif menuNum == 5:
-    #belum lagi
-    print("not yet")
+    installed_component = []
+    allowed_list = []
+    user_type, capacity, modifier, allowed = choose_user_type()
+    allowed_list = allowing_component(allowed)
+    humanity = 100
+    locked = False
   elif menuNum == 6:
     exit()
     
