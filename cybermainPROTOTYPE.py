@@ -140,9 +140,11 @@ installed_component = []
 allowed_list = []
 locked = False
 def show_list():
-  print(54*"-")
+  print(67*"-")
+  print(f"{"No":>2}|{"Cybernetic":<20}|{"Slot":<10}|{"Humanity loss":<13}|{"Power":<5}|{"Category":<11}|")
+  print(67*"-")
   for index, component in enumerate(component_list, 1):
-    print(f"{index:>2}|{component[0]:<20}|{component[1]:<10}|{component[2]:<3}|{component[3]:<3}|{component[4]:<11}|")
+    print(f"{index:>2}|{component[0]:<20}|{component[1]:<10}|{component[2]:<13}|{component[3]:<5}|{component[4]:<11}|")
 
 
 def choose_user_type():
@@ -239,6 +241,10 @@ installed_component = []
 
 
 show_list()
+installed_component = []
+allowed_list = []
+humanity = 100
+locked = False
 user_type, capacity, modifier, allowed = choose_user_type()
 allowed_list = allowing_component(allowed)
 print("  [1] Show available components\n  [2] Install a component\n  [3] remove a component\n  [4] Run analysis\n  [5] Change user type (resets installed list)\n  [6]exit\n  [0]see menu again")
@@ -259,17 +265,20 @@ while True:
   elif menuNum == 3:
     remove_component(installed_component)
   elif menuNum == 4:
-    total_power = calc_power(installed_component)
-    power_percentage = calc_power_load(capacity, total_power)
-    humanity = calc_humanity(installed_component, modifier, user_type)
-    clashes = find_clashes(installed_component)
-    penalty = calc_penalty(clashes)
-    overload_score = calc_overload(power_percentage,humanity, penalty)
-    status = get_status(humanity, overload_score)
-    advisory = find_advisory(status)
-    recommendation = recommend(installed_component, status)
-    malfunction_result = malfunction(overload_score, installed_component)
-    show_report()
+    if installed_component == []:
+      print("Please install Cybernetic first....")
+    else:
+      total_power = calc_power(installed_component)
+      power_percentage = calc_power_load(capacity, total_power)
+      humanity = calc_humanity(installed_component, modifier, user_type)
+      clashes = find_clashes(installed_component)
+      penalty = calc_penalty(clashes)
+      overload_score = calc_overload(power_percentage,humanity, penalty)
+      status = get_status(humanity, overload_score)
+      advisory = find_advisory(status)
+      recommendation = recommend(installed_component, status)
+      malfunction_result = malfunction(overload_score, installed_component)
+      show_report()
   elif menuNum == 5:
     installed_component = []
     allowed_list = []
