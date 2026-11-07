@@ -7,13 +7,8 @@ def make_bar(value):
 #ni pakai sekali je, and buat function sepatutnya untuk divide task, tapi aku alang ii
 
 
-def ask_number(question, low, high):
-    user_input = input(question)
-    while not user_input.isdigit() or not low <= int(user_input) <= high:
-        print(f"input is out of range, please input between {low} to {high}")
-        user_input = input(question)
-    return int(user_input)
-
+hjfkldsafewbnscjkhvsdafdasfasd
+makng changesfdjskafndasukfhjshsdaG
 #ni nak mintak logic roles buat
 
 #im mking new function bruh
